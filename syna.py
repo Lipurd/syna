@@ -42,10 +42,14 @@ class Syna(SynaInterface):
 
     def click(self):
 
+        # check if menu with list as item
         if isinstance(self.view, Menu):
-            itemstr = self.view.items[self.view.selected][1]
-            if itemstr[:1] == '@':
-                self.show(itemstr[1:])
+            if isinstance(self.view.items[self.view.selected], list):
+                itemstr = self.view.items[self.view.selected][1]
+                if itemstr[:1] == '@':
+                    self.show(itemstr[1:])
+
+        self.view.click()
 
     def down(self):
 
@@ -60,29 +64,24 @@ class Menu(SynaInterface):
 
     def __init__(self, display, items, headline = None, parent = None):
 
-        # yellow header?
-        self.headline = headline
-
+        # add back to parent
         self.parent = parent
+        if self.parent:
+            self.items.append(['back', '@%s' % self.parent])
 
+        self.display = display
+
+        # set headline
+        self.headline = headline
         if self.headline:
             self.topmargin = HEADLINE_MARGIN
         else:
             self.topmargin = 0
 
-        # display settings
-        self.display = display
-        self.height = display.height
-        self.width = display.width
-
         # set maximum number of items per page
-        self.pagebreak = int((self.height - self.topmargin) / 10 )
+        self.pagebreak = int((self.display.height - self.topmargin) / 10 )
 
         self.items = items
-
-        # add back to parent
-        if self.parent:
-            self.items.append(['back', '@%s' % self.parent])
 
         self.selected = 0
         self.page = 0
@@ -143,7 +142,7 @@ class Menu(SynaInterface):
         """Click on a menu item"""
 
         # abort if no call specified
-        if not isinstance(self.items[self.selected], list) or len(self.items[self.selected]) < 2:
+        if not isinstance(self.items[self.selected], list) or len(self.items[self.selected]) != 2:
             return
 
         eval(self.items[self.selected][1])
