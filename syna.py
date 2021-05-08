@@ -10,8 +10,6 @@
 ##################################################
 
 from micropython import const
-from math import floor
-import ssd1306
 
 HEADLINE_MARGIN = const(16)
 
