@@ -13,7 +13,48 @@ from micropython import const
 
 HEADLINE_MARGIN = const(16)
 
-class Syna:
+class SynaInterface:
+    def show(self):
+        pass
+    def up(self):
+        pass
+    def down(self):
+        pass
+    def click(self):
+        pass
+
+class Syna(SynaInterface):
+
+    def __init__(self, display):
+        self.display = display
+        self.views = {}
+        self.view = None
+
+    def addMenu(self, identifier, items, headline = None):
+
+        self.views[identifier] = Menu(self.display, items, headline)
+
+    def show(self, identifier):
+
+        self.view = self.views[identifier]
+        self.view.show()
+
+    def click(self):
+
+        if isinstance(self.view, Menu):
+            if self.view.items[self.view.selected][1] == '@sub1':
+                self.show('sub1')
+
+    def down(self):
+
+        self.view.down()
+
+    def up(self):
+
+        self.view.up()
+
+
+class Menu(SynaInterface):
 
     def __init__(self, display, items, headline = None):
 
