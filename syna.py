@@ -45,8 +45,6 @@ class Syna(SynaInterface):
             itemstr = self.view.items[self.view.selected][1]
             if itemstr[:1] == '@':
                 self.show(itemstr[1:])
-            elif itemstr[:1] == '#' and itemstr[1:] == 'back':
-                self.show(self.view.parent)
 
     def down(self):
 
@@ -80,6 +78,11 @@ class Menu(SynaInterface):
         self.pagebreak = int((self.height - self.topmargin) / 10 )
 
         self.items = items
+
+        # add back to parent
+        if self.parent:
+            self.items.append(['back', '@%s' % self.parent])
+
         self.selected = 0
         self.page = 0
         self.nextpagestr = None
