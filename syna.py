@@ -33,6 +33,7 @@ class Syna(SynaInterface):
     def addMenu(self, identifier, items, headline = None, parent = None):
 
         self.views[identifier] = Menu(self.display, items, headline, parent)
+        self.views[identifier].identifier = identifier
 
     def show(self, identifier):
 
