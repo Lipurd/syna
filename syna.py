@@ -64,6 +64,8 @@ class Menu(SynaInterface):
 
     def __init__(self, display, items, headline = None, parent = None):
 
+        self.items = items
+
         # add back to parent
         self.parent = parent
         if self.parent:
@@ -80,8 +82,6 @@ class Menu(SynaInterface):
 
         # set maximum number of items per page
         self.pagebreak = int((self.display.height - self.topmargin) / 10 )
-
-        self.items = items
 
         self.selected = 0
         self.page = 0
@@ -122,13 +122,13 @@ class Menu(SynaInterface):
     def _select(self):
         """Highlight the current 'on page position' menu item"""
 
-        self.display.framebuf.fill_rect(0, self.topmargin + (self.selected - (self.page * self.pagebreak))*10, self.width, 9, 1)
+        self.display.framebuf.fill_rect(0, self.topmargin + (self.selected - (self.page * self.pagebreak))*10, self.display.width, 9, 1)
         self.display.text(self._itemtext(self.selected), 1, self.topmargin + (self.selected - (self.page * self.pagebreak))*10 + 1, 0)
 
     def _deslect(self):
         """Reset the current 'on page position' menu item"""
 
-        self.display.framebuf.fill_rect(0, self.topmargin + (self.selected - (self.page * self.pagebreak))*10, self.width, 9, 0)
+        self.display.framebuf.fill_rect(0, self.topmargin + (self.selected - (self.page * self.pagebreak))*10, self.display.width, 9, 0)
         self.display.text(self._itemtext(self.selected), 1, self.topmargin + (self.selected - (self.page * self.pagebreak))*10 + 1, 1)
 
     def _itemtext(self, pos):
