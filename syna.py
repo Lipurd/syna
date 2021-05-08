@@ -14,6 +14,12 @@ from micropython import const
 HEADLINE_MARGIN = const(16)
 
 class SynaInterface:
+
+    def __init__(self, headline = None, parent = None):
+        self.headline = headline
+        self.parent = parent
+        pass
+
     def show(self):
         pass
     def up(self):
@@ -33,6 +39,11 @@ class Syna(SynaInterface):
     def addMenu(self, identifier, items, headline = None, parent = None):
 
         self.views[identifier] = Menu(self.display, items, headline, parent)
+        self.views[identifier].identifier = identifier
+
+    def addView(self, identifier, view, headline = None, parent = None):
+
+        self.views[identifier] = view(headline, parent)
         self.views[identifier].identifier = identifier
 
     def show(self, identifier):
@@ -64,17 +75,16 @@ class Menu(SynaInterface):
 
     def __init__(self, display, items, headline = None, parent = None):
 
+        super().__init__(headline, parent)
         self.items = items
 
         # add back to parent
-        self.parent = parent
         if self.parent:
             self.items.append(['back', '@%s' % self.parent])
 
         self.display = display
 
         # set headline
-        self.headline = headline
         if self.headline:
             self.topmargin = HEADLINE_MARGIN
         else:
