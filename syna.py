@@ -15,7 +15,7 @@ import ssd1306
 
 HEADLINE_MARGIN = const(16)
 
-class syna:
+class Syna:
 
     def __init__(self, display, items, headline = None):
 
