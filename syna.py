@@ -30,9 +30,9 @@ class Syna(SynaInterface):
         self.views = {}
         self.view = None
 
-    def addMenu(self, identifier, items, headline = None):
+    def addMenu(self, identifier, items, headline = None, parent = None):
 
-        self.views[identifier] = Menu(self.display, items, headline)
+        self.views[identifier] = Menu(self.display, items, headline, parent)
 
     def show(self, identifier):
 
@@ -42,8 +42,11 @@ class Syna(SynaInterface):
     def click(self):
 
         if isinstance(self.view, Menu):
-            if self.view.items[self.view.selected][1] == '@sub1':
-                self.show('sub1')
+            itemstr = self.view.items[self.view.selected][1]
+            if itemstr[:1] == '@':
+                self.show(itemstr[1:])
+            elif itemstr[:1] == '#' and itemstr[1:] == 'back':
+                self.show(self.view.parent)
 
     def down(self):
 
@@ -56,10 +59,12 @@ class Syna(SynaInterface):
 
 class Menu(SynaInterface):
 
-    def __init__(self, display, items, headline = None):
+    def __init__(self, display, items, headline = None, parent = None):
 
         # yellow header?
         self.headline = headline
+
+        self.parent = parent
 
         if self.headline:
             self.topmargin = HEADLINE_MARGIN
