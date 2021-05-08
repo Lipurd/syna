@@ -56,7 +56,7 @@ class Syna:
         for pos in range(self.page * self.pagebreak, len(self.items)):
 
             # print menu item with the current "on page position" + 1 + headline margin
-            self.display.text(self.items[pos], 1, self.topmargin + (pos - (self.page * self.pagebreak))*10 + 1)
+            self.display.text(self._itemtext(pos), 1, self.topmargin + (pos - (self.page * self.pagebreak))*10 + 1)
 
             # check if next item would be out of bound
             if (pos - (self.page * self.pagebreak) + 1) >= self.pagebreak:
@@ -74,13 +74,29 @@ class Syna:
         """Highlight the current 'on page position' menu item"""
 
         self.display.framebuf.fill_rect(0, self.topmargin + (self.selected - (self.page * self.pagebreak))*10, self.width, 9, 1)
-        self.display.text(self.items[self.selected], 1, self.topmargin + (self.selected - (self.page * self.pagebreak))*10 + 1, 0)
+        self.display.text(self._itemtext(self.selected), 1, self.topmargin + (self.selected - (self.page * self.pagebreak))*10 + 1, 0)
 
     def _deslect(self):
         """Reset the current 'on page position' menu item"""
 
         self.display.framebuf.fill_rect(0, self.topmargin + (self.selected - (self.page * self.pagebreak))*10, self.width, 9, 0)
-        self.display.text(self.items[self.selected], 1, self.topmargin + (self.selected - (self.page * self.pagebreak))*10 + 1, 1)
+        self.display.text(self._itemtext(self.selected), 1, self.topmargin + (self.selected - (self.page * self.pagebreak))*10 + 1, 1)
+
+    def _itemtext(self, pos):
+
+        if isinstance(self.items[pos], list):
+            return str(self.items[pos][0])
+
+        return str(self.items[pos])
+
+    def click(self):
+        """Click on a menu item"""
+
+        # abort if no call specified
+        if not isinstance(self.items[self.selected], list) or len(self.items[self.selected]) < 2:
+            return
+
+        eval(self.items[self.selected][1])
 
     def down(self):
         """Navigate down in the menu"""
