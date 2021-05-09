@@ -6,7 +6,7 @@
 ## Author: Dustin Kröger
 ## Copyright: Copyright 2021, Lipurd
 ## License: MIT License
-## Version: 0.1.0
+## Version: 0.2.0
 ##################################################
 
 from micropython import const
@@ -15,9 +15,17 @@ HEADLINE_MARGIN = const(16)
 
 class SynaInterface:
 
-    def __init__(self, headline = None, parent = None):
+    def __init__(self, display, headline = None, parent = None):
         self.headline = headline
         self.parent = parent
+        self.display = display
+
+        # set headline
+        if self.headline:
+            self.topmargin = HEADLINE_MARGIN
+        else:
+            self.topmargin = 0
+
         pass
 
     def show(self):
@@ -43,7 +51,7 @@ class Syna(SynaInterface):
 
     def addView(self, identifier, view, headline = None, parent = None):
 
-        self.views[identifier] = view(headline, parent)
+        self.views[identifier] = view(self.display, headline, parent)
         self.views[identifier].identifier = identifier
 
     def show(self, identifier):
@@ -59,8 +67,8 @@ class Syna(SynaInterface):
                 itemstr = self.view.items[self.view.selected][1]
                 if itemstr[:1] == '@':
                     self.show(itemstr[1:])
-
-        self.view.click()
+        else:
+            self.view.click()
 
     def down(self):
 
@@ -75,20 +83,12 @@ class Menu(SynaInterface):
 
     def __init__(self, display, items, headline = None, parent = None):
 
-        super().__init__(headline, parent)
+        super().__init__(display, headline, parent)
         self.items = items
 
         # add back to parent
         if self.parent:
             self.items.append(['back', '@%s' % self.parent])
-
-        self.display = display
-
-        # set headline
-        if self.headline:
-            self.topmargin = HEADLINE_MARGIN
-        else:
-            self.topmargin = 0
 
         # set maximum number of items per page
         self.pagebreak = int((self.display.height - self.topmargin) / 10 )
